@@ -672,6 +672,7 @@ async def post_init(application: Application):
         BotCommand("/new", "Start new dialog"),
         BotCommand("/mode", "Select chat mode"),
         BotCommand("/retry", "Re-generate response for previous query"),
+        BotCommand("/clear", "Clear the last 48 hours of chat"),
         BotCommand("/balance", "Show balance"),
         BotCommand("/settings", "Show settings"),
         BotCommand("/help", "Show help message"),
