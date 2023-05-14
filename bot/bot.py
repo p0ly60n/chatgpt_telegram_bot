@@ -162,7 +162,6 @@ async def clear_handle(update: Update, context: CallbackContext):
 
     for message in messages:
         # Delete each message
-        
         context.bot.delete_message(chat_id=update.message.chat_id, message_id=message.message_id)
 
     #send welcoming message
