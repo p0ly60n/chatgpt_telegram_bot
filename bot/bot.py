@@ -152,25 +152,6 @@ async def help_handle(update: Update, context: CallbackContext):
     await update.message.reply_text(HELP_MESSAGE, parse_mode=ParseMode.HTML)
 
 
-async def clear_handle(update: Update, context: CallbackContext):
-    await register_user_if_not_exists(update, context, update.message.from_user)
-    user_id = update.message.from_user.id
-    db.set_user_attribute(user_id, "last_interaction", datetime.now())
-    
-    # delete all the previous messages
-    messages = context.bot.get_chat_messages(chat_id=update.message.chat_id)
-
-    for message in messages:
-        # Delete each message
-        context.bot.delete_message(chat_id=update.message.chat_id, message_id=message.message_id)
-
-    #send welcoming message
-    db.start_new_dialog(user_id)
-    await update.message.reply_text("Starting new dialog ✅")
-
-    chat_mode = db.get_user_attribute(user_id, "current_chat_mode")
-    await update.message.reply_text(f"{config.chat_modes[chat_mode]['welcome_message']}", parse_mode=ParseMode.HTML)
-
 
 async def help_group_chat_handle(update: Update, context: CallbackContext):
     await register_user_if_not_exists(update, context, update.message.from_user)
@@ -668,7 +649,6 @@ async def post_init(application: Application):
         BotCommand("/new", "Start new dialog"),
         BotCommand("/mode", "Select chat mode"),
         BotCommand("/retry", "Re-generate response for previous query"),
-        BotCommand("/clear", "Clear the last 48 hours of chat"),
         BotCommand("/balance", "Show balance"),
         BotCommand("/settings", "Show settings"),
         BotCommand("/help", "Show help message"),
@@ -699,7 +679,6 @@ def run_bot() -> None:
     application.add_handler(CommandHandler("retry", retry_handle, filters=user_filter))
     application.add_handler(CommandHandler("new", new_dialog_handle, filters=user_filter))
     application.add_handler(CommandHandler("cancel", cancel_handle, filters=user_filter))
-    application.add_handler(CommandHandler("clear", clear_handle, filters=user_filter))
 
     application.add_handler(MessageHandler(filters.VOICE & user_filter, voice_message_handle))
 
